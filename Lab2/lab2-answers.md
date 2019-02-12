@@ -28,6 +28,9 @@ tickets(_ticket_id_, /_user_name_/, /_performance_id_/)
 customers(_user_name_, name, password)
 
 7. 
+The first way of doing it is implementing a new attribute in performances called remaining_seats. 
+Another way of doing this is by making a new table, sales, which keeps track of the number of seats remaining in each performance. 
+
 The first option is to subtract the amount of tickets sold from the capacity in Theater by making a new attribute in performances.
 You could call it remaining_seats, and it can calculate remaining_seats = (capacity - 1) every time a new ticket is sold.
 This means implementing a counter that increments every time a new ticket is sold for each performance.
@@ -40,8 +43,6 @@ JOIN performances
 USING(theater_name)
 GROUP BY performance_id
 
-The first way of doing it is implementing a new attribute in performances called remaining_seats. 
-Another way of doing this is by making a new table, sales, which keeps track of the number of seats remaining in each performance. 
 
 
 
