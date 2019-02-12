@@ -1,12 +1,13 @@
-PRAGMA foriegn_keys = OFF; 
+PRAGMA foreign_keys = OFF; 
 
 DROP TABLE IF EXISTS theaters;
 DROP TABLE IF EXISTS movies;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS customers;
 DROP TABLE IF EXISTS performances;
+DROP TABLE IF EXISTS sales;
 
-PRAGMA foriegn_keys = ON;
+PRAGMA foreign_keys = ON;
 
 CREATE TABLE theaters(
   theater_name TEXT,
@@ -35,6 +36,7 @@ CREATE TABLE performances(
   date DATE, 
   imdb_key TEXT,
   theater_name TEXT, 
+  remaining_seats INT, 
   PRIMARY KEY(performance_id),
   FOREIGN KEY (imdb_key) REFERENCES movies(imdb_key),
   FOREIGN KEY (theater_name) REFERENCES theaters(theater_name)
@@ -73,8 +75,3 @@ VALUES ('ravedave', 'David Jungermann', 'hello'),
        ('bdd', 'David Blomberg', 'hello123'),
        ('pettson','Alexander Pettersson', 'hello123'); 
  
-INSERT 
-INTO   tickets(ticket_id, user_name, performance_id)
-VALUES (lower(hex(randomblob(16))), 'ravedave', '123'),  
-       (lower(hex(randomblob(16))), 'bdd', '124'),
-       (lower(hex(randomblob(16))),'pettsson', '125'); 
