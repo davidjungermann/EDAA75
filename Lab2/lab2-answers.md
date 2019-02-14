@@ -70,3 +70,24 @@ BEGIN
  )
  END;
 END;
+
+CREATE TABLE sales AS
+  SELECT performance_id, capacity AS remaining_seats
+  FROM theaters
+  JOIN performances
+  USING(theater_name)
+  GROUP BY performance_id
+  ;
+
+UPDATE sales 
+SET remaining_seats = (remaining_seats - 1)
+WHERE performance_id LIKE "123%";
+
+UPDATE sales 
+SET remaining_seats = (remaining_seats - 1)
+WHERE performance_id LIKE "124%";
+
+UPDATE sales 
+SET remaining_seats = (remaining_seats - 1)
+WHERE performance_id LIKE "125%";
+
