@@ -34,9 +34,9 @@ CREATE TABLE performances(
   performance_id TEXT,
   start_time TIME,
   date DATE, 
-  remaining_seats INT, 
   imdb_key TEXT,
   theater_name TEXT,
+  remaining_seats INT,
   PRIMARY KEY(performance_id),
   FOREIGN KEY (imdb_key) REFERENCES movies(imdb_key),
   FOREIGN KEY (theater_name) REFERENCES theaters(theater_name)
@@ -78,30 +78,20 @@ VALUES ('ravedave', 'David Jungermann', 'qwerty'),
 INSERT
 INTO   tickets(ticket_id, user_name, performance_id)
 VALUES (lower(hex(randomblob(16))), 'ravedave', '123'),
+       (lower(hex(randomblob(16))), 'ravedave', '123'),
+       (lower(hex(randomblob(16))), 'ravedave', '123'),
+       (lower(hex(randomblob(16))), 'ravedave', '123'),
        (lower(hex(randomblob(16))), 'bdd', '124'),
        (lower(hex(randomblob(16))), 'pettsson', '125');  
 
-CREATE TABLE sales AS
-  SELECT performance_id, capacity AS remaining_seats
-  FROM theaters
-  JOIN performances
-  USING(theater_name)
-  GROUP BY performance_id
-  ;
-
-UPDATE sales 
-SET remaining_seats = (remaining_seats - 1)
-WHERE performance_id LIKE "123%";
-
-UPDATE sales 
-SET remaining_seats = (remaining_seats - 1)
-WHERE performance_id LIKE "124%";
-
-UPDATE sales 
-SET remaining_seats = (remaining_seats - 1)
-WHERE performance_id LIKE "125%";
-
-
-
-
-
+UPDATE performances
+SET    remaining_seats = ((SELECT capacity
+                          FROM   theaters
+                          WHERE  theaters.theater_name = performances.theater_name
+                          ) - (SELECT count()
+                               FROM   tickets
+                               GROUP BY performance_id
+                               HAVING performances.performance_id = tickets.performance_id
+                               ))
+SELECT *
+FROM performances
