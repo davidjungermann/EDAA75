@@ -31,7 +31,7 @@ CREATE TABLE customers(
 );
 
 CREATE TABLE performances(
-  performance_id TEXT,
+  performance_id DEFAULT (lower(hex(randomblob(16)))),
   start_time TIME,
   date DATE, 
   imdb_key TEXT,
@@ -45,7 +45,7 @@ CREATE TABLE performances(
 CREATE TABLE tickets(
   ticket_id TEXT DEFAULT (lower(hex(randomblob(16)))),
   user_name TEXT,
-  performance_id TEXT,
+  performance_id DEFAULT (lower(hex(randomblob(16)))),
   PRIMARY KEY (ticket_id),
   FOREIGN KEY (user_name) REFERENCES customers(user_name),
   FOREIGN KEY (performance_id) REFERENCES performances(performance_id)
@@ -65,9 +65,9 @@ VALUES ('tt0368226', 'The Room', 2003, 99),
 
 INSERT
 INTO   performances(performance_id, start_time, date, imdb_key, theater_name)
-VALUES ('123', '19:30', '2019-04-20','tt0368226', 'Spegeln'),
-       ('124', '21:40', '2019-04-21','tt4954522', 'Luna'),
-       ('125', '15:00', '2019-04-19', 'tt3152098', 'Le arte de biographie');
+VALUES (lower(hex(randomblob(16))), '19:30', '2019-04-20','tt0368226', 'Spegeln'),
+       (lower(hex(randomblob(16))), '21:40', '2019-04-21','tt4954522', 'Luna'),
+       (lower(hex(randomblob(16))), '15:00', '2019-04-19', 'tt3152098', 'Le arte de biographie');
 
 INSERT 
 INTO   customers(user_name, name, password)
@@ -85,13 +85,27 @@ VALUES (lower(hex(randomblob(16))), 'ravedave', '123'),
        (lower(hex(randomblob(16))), 'pettsson', '125');  
 
 UPDATE performances
-SET    remaining_seats = ((SELECT capacity
-                          FROM   theaters
-                          WHERE  theaters.theater_name = performances.theater_name
-                          ) - (SELECT count()
-                               FROM   tickets
-                               GROUP BY performance_id
-                               HAVING performances.performance_id = tickets.performance_id
-                               ))
+SET    remaining_seats = 0
+
 SELECT *
 FROM performances
+SELECT performance_id AS performanceId, date, start_time AS startTime, production_year, theater_name AS theater, ((SELECT capacity 
+                                                                                                        FROM theaters 
+                                                                                                        WHERE theaters.theater_name = performances.theater_name)
+                                                                                                         - (SELECT count()
+          FROM tickets 
+          GROUP BY performance_id 
+          HAVING performances.performance_id = tickets.performance_id)) AS remainingSeats
+          FROM performances 
+          JOIN movies 
+          USING(imdb_key) 
+          JOIN theaters
+          USING(theater_name);
+
+SELECT capacity - count() as remainingSeats
+FROM theaters
+JOIN performances
+USING (theater_name)
+LEFT OUTER JOIN tickets 
+USING (performance_id) 
+GROUP BY performance_id 
