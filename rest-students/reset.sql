@@ -51,3 +51,4 @@ CREATE TABLE tickets(
   FOREIGN KEY (performance_id) REFERENCES performances(performance_id)
 ); 
 
+

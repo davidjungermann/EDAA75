@@ -84,28 +84,18 @@ VALUES (lower(hex(randomblob(16))), 'ravedave', '123'),
        (lower(hex(randomblob(16))), 'bdd', '124'),
        (lower(hex(randomblob(16))), 'pettsson', '125');  
 
-UPDATE performances
-SET    remaining_seats = 0
-
-SELECT *
-FROM performances
-SELECT performance_id AS performanceId, date, start_time AS startTime, production_year, theater_name AS theater, ((SELECT capacity 
-                                                                                                        FROM theaters 
-                                                                                                        WHERE theaters.theater_name = performances.theater_name)
-                                                                                                         - (SELECT count()
-          FROM tickets 
-          GROUP BY performance_id 
-          HAVING performances.performance_id = tickets.performance_id)) AS remainingSeats
-          FROM performances 
-          JOIN movies 
-          USING(imdb_key) 
-          JOIN theaters
-          USING(theater_name);
-
 SELECT capacity - count() as remainingSeats
 FROM theaters
 JOIN performances
 USING (theater_name)
 LEFT OUTER JOIN tickets 
 USING (performance_id) 
+GROUP BY performance_id 
+
+SELECT date, start_time, theater_name, title, year, count() AS nbrOfTickets
+FROM tickets
+JOIN performances 
+USING(performance_id)
+JOIN movies
+USING(imdb_key)
 GROUP BY performance_id 

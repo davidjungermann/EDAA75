@@ -27,6 +27,7 @@ public class App {
         get("/performances", (req, res) -> db.getPerformances(req, res));
         get("/customers/:id/tickets", (req, res) -> db.getTickets(req, res, req.params(":id")));
         post("/tickets", (req, res) -> db.postTicket(req, res));
+        
     }
 }
 
@@ -102,7 +103,7 @@ class Database {
     }
 
     String ping(Request req, Response res) {
-        var result = new String("pong" + " " + res.status());
+        var result = new String("\npong" + " " + res.status()) + "\n";
         res.status(200);
         return result;
     }
@@ -129,13 +130,12 @@ class Database {
             }
             var x = ps.executeBatch();
             res.status(200);
-            return "OK \n";
+            return "\nOK\n";
         } catch (SQLException e) {
             e.printStackTrace();
             res.status(500);
-            return "Could not insert values \n";
+            return "\nCould not insert values \n";
         }
-
     }
 
     public String getMovies(Request req, Response res) {
@@ -221,11 +221,11 @@ class Database {
 
             if (ps.executeUpdate() != 1) {
                 res.status(400);
-                return "Nothing inserted... \n";
+                return "\nNothing inserted... \n";
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return "No such movie or theater \n";
+            return "\nNo such movie or theater \n";
         }
 
         var query = "SELECT performance_id\n" + "FROM performances\n" + "WHERE rowid = last_insert_rowid()";
@@ -233,7 +233,7 @@ class Database {
             var rs = ps.executeQuery();
             if (rs.next()) {
                 var id = rs.getString("performance_id");
-                var result = String.format("performances/%s\n }", id);
+                var result = String.format("\nperformances/%s\n }", id);
                 res.status(201);
                 res.body(result);
                 return result;
@@ -276,7 +276,8 @@ class Database {
         res.type("application/json");
 
         var query = "SELECT date, start_time, theater_name, title, year, count() AS nbrOfTickets \n" + "FROM tickets \n"
-                + "JOIN performances \n" + "USING(performance_id) \n" + "GROUP BY performance_id \n"
+                + "JOIN performances \n" + "USING(performance_id) \n" + "JOIN movies\n" + "USING(imdb_key)\n
+                " +"GROUP BY performance_id \n"
                 + "HAVING user_name = ?";
 
         try (var ps = conn.prepareStatement(query)) {
@@ -288,16 +289,16 @@ class Database {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
-            return "There are no tickets for this user\n";
+            return "\nThere are no tickets for this user\n";
         }
     }
 
     String postTicket(Request req, Response res) {
         res.type("application/json");
 
-        var remainingSeats = "SELECT capacity - count()" + "FROM theaters \n" + "JOIN performances \n"
-                + "USING (theater_name) \n" + "LEFT OUTER JOIN tickets \n" + "USING (performance_id) \n"
-                + "GROUP BY performance_id \n" + "HAVING performance_id = ? ";
+        var remainingSeats = "SELECT capacity - count()\n" + "FROM theaters\n" + "JOIN performances\n"
+                + "USING (theater_name)\n" + "LEFT OUTER JOIN tickets\n" + "USING (performance_id)\n"
+                + "GROUP BY performance_id\n" + "HAVING performance_id = ?;";
 
         try (var ps = conn.prepareStatement(remainingSeats)) {
             ps.setString(1, req.queryParams("performance"));
@@ -310,6 +311,7 @@ class Database {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return "Remaining seats";
         }
 
         var password = "SELECT password \n" + "FROM users \n" + "WHERE user_name =  ?";
@@ -320,22 +322,25 @@ class Database {
 
             if (rsPass.next()) {
                 var passDB = rsPass.getString("password");
-                if (!(req.queryParams(hash("pwd")).equals(hash(passDB)))){
+                if (!(req.queryParams(hash("pwd")).equals(hash("passDB")))){
                     return "Incorrect password";
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return "password";
         }
 
-        var ticketStatement = "INSERT \n" + "INTO tickets(user_name, performance_id) \n" + "VALUES  (?, ?)";
+        var ticketStatement = "INSERT \n" + "INTO tickets(ticket_id, user_name, performance_id) \n" + "VALUES ((lower(hex(randomblob(16)))), ?, ?);";
 
         try (var ps = conn.prepareStatement(ticketStatement)) {
+            conn.createStatement().execute("PRAGMA foreign_keys = ON");
             ps.setString(1, req.queryParams("user"));
             ps.setString(2, req.queryParams("performance"));
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            return "tickets";
         }
 
         var returnTicket = "SELECT ticket_id \n" + "FROM tickets \n" + "WHERE rowid = last_insert_rowid()";
