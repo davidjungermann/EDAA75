@@ -16,7 +16,7 @@ import java.math.BigInteger;
 public class App {
 
     public static void main(String[] args) {
-        var db = new Database("movies.sqlite");
+        var db = new Database("krusty.sqlite");
         port(7007);
         // before("/*", (req, res) -> appl.log(req.splat()[0]));
         get("/ping", (req, res) -> db.ping(req, res));

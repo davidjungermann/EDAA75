@@ -24,7 +24,7 @@ production_date DATE,
 location TEXT,
 delivery_time TIME, 
 delivery_date DATE, 
-blocked BOOLEAN NOT NULL CHECK (blocked IN (0,1))),
+blocked TEXT,
 PRIMARY KEY (pallet_nbr),
 FOREIGN KEY (cookie_id) REFERENCES cookies(cookie_id), 
 FOREIGN KEY (order_nbr) REFERENCES orders(order_id)
@@ -35,7 +35,7 @@ order_nbr DEFAULT (lower(hex(randomblob(16)))),
 customer_id DEFAULT (lower(hex(randomblob(16)))),
 customer_name TEXT, 
 address TEXT,
-PRIMARY KEY (order_nbr)
+PRIMARY KEY (order_nbr),
 FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
@@ -71,3 +71,7 @@ amount INT,
 FOREIGN KEY (cookie_id) REFERENCES cookies(cookie_id),
 FOREIGN KEY (material_id) REFERENCES materials(material_id)
 );
+
+
+
+
