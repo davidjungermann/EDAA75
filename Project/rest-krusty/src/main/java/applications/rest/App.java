@@ -96,7 +96,6 @@ class Database {
             "DELETE FROM cookies", "DELETE FROM pallets", "DELETE FROM orders",
             "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials", "DELETE FROM ingredients",
             
-            
             "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(1, 'Finkakor AB', 'Helsingborg')",
             "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(2, 'Småbröd AB', 'Malmö')",
             "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(3, 'Kaffebröd AB', 'Landskrona')",
@@ -259,7 +258,6 @@ class Database {
         }
         return "";
     }
-
 
 }
 
