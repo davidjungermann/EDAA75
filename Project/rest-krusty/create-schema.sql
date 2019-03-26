@@ -73,11 +73,3 @@ PRIMARY KEY(material_id, cookie_id)
 );
 
 
-
-SELECT cookie_name AS cookie, material_name AS ingredient, ingredient_amount AS quantity, unit 
-FROM cookies 
-JOIN ingredients 
-USING (cookie_id) 
-JOIN materials 
-USING (material_id)
-

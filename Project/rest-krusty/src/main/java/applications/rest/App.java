@@ -8,6 +8,9 @@ import java.util.*;
 import spark.*;
 import static spark.Spark.*;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.nio.charset.StandardCharsets;
@@ -89,7 +92,6 @@ class Database {
         return result;
     }
 
-    
     String reset(Request req, Response res) {
         res.type("application/json");
         String[] statements = {
@@ -164,13 +166,13 @@ class Database {
             "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 19, 5)",
             "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 10, 50)" };
            
-        try (var ps = conn.createStatement()) {
+        try (var ps = conn.createStatement()) { 
             for (String statement : statements) {
-                ps.addBatch(statement);
+               ps.execute(statement);
             }
-            var x = ps.executeBatch();
             res.status(200);
-            return "\nOK\n";
+            Gson gson = new GsonBuilder().create();
+            return gson.toJson("status: " + "ok");
         } catch (SQLException e) {
             e.printStackTrace();
             res.status(500);
