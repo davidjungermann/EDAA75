@@ -11,15 +11,15 @@ DROP TABLE IF EXISTS materials;
 PRAGMA foreign_keys = ON; 
 
 CREATE TABLE cookies(
-cookie_id DEFAULT (lower(hex(randomblob(16)))),
+cookie_id INT,
 cookie_name TEXT,
 PRIMARY KEY (cookie_id)
 );
 
 CREATE TABLE pallets(
 pallet_nbr DEFAULT (lower(hex(randomblob(16)))),
-cookie_id  DEFAULT (lower(hex(randomblob(16)))),
-order_nbr  DEFAULT (lower(hex(randomblob(16)))),
+cookie_id  INT, 
+order_nbr  INT,
 production_date DATE,
 location TEXT,
 delivery_time TIME, 
@@ -31,18 +31,17 @@ FOREIGN KEY (order_nbr) REFERENCES orders(order_id)
 );
 
 CREATE TABLE orders(
-order_nbr DEFAULT (lower(hex(randomblob(16)))),
+order_nbr INT,
+delivery_time TIME,
 customer_id DEFAULT (lower(hex(randomblob(16)))),
-customer_name TEXT, 
-address TEXT,
 PRIMARY KEY (order_nbr),
 FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE order_sizes(
-cookie_id DEFAULT (lower(hex(randomblob(16)))),
-order_nbr DEFAULT (lower(hex(randomblob(16)))),
-pallet_amount INT,
+cookie_id INT,
+order_nbr INT,
+pallet_amount INT CHECK(pallet_amount >= 1),
 FOREIGN KEY(cookie_id) REFERENCES cookies(cookie_id),
 FOREIGN KEY(order_nbr) REFERENCES orders(order_nbr)
 );
@@ -55,9 +54,9 @@ PRIMARY KEY (customer_id)
 );
 
 CREATE TABLE materials(
-material_id DEFAULT (lower(hex(randomblob(16)))),
+material_id INT,
 material_name TEXT,
-amount INT, 
+amount INT CHECK(amount >= 0), 
 unit TEXT,
 last_delivery_date DATE,
 last_delivery_amount INT,
@@ -65,11 +64,12 @@ PRIMARY KEY (material_id)
 );
 
 CREATE TABLE ingredients(
-cookie_id DEFAULT (lower(hex(randomblob(16)))),
-material_id DEFAULT (lower(hex(randomblob(16)))),
-amount INT,
+cookie_id INT,
+material_id INT,
+amount INT CHECK(amount >= 0),
 FOREIGN KEY (cookie_id) REFERENCES cookies(cookie_id),
-FOREIGN KEY (material_id) REFERENCES materials(material_id)
+FOREIGN KEY (material_id) REFERENCES materials(material_id),
+PRIMARY KEY(material_id, cookie_id)
 );
 
 
