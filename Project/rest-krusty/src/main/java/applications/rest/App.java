@@ -19,7 +19,8 @@ public class App {
         var db = new Database("krusty.sqlite");
         port(8888);
         get("/ping", (req, res) -> db.ping(req, res));
-        get("/customers", (req, res) -> db.getCustomers(req, res)); 
+        get("/customers", (req, res) -> db.getCustomers(req, res));
+        get("/ingredients", (req, res) -> db.getMaterials(req, res));  
     }
 }
 
@@ -87,7 +88,7 @@ class Database {
 
     public String getCustomers(Request req, Response res) {
         res.type("application/json");
-        var query = "SELECT customer_name, address\n" + "FROM customers\n";
+        var query = "SELECT customer_name AS name, address\n" + "FROM customers\n";
         var params = new LinkedList<String>();
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;
@@ -95,7 +96,7 @@ class Database {
                 ps.setString(++index, param);
             }
             var rs = ps.executeQuery();
-            var result = JSONizer.toJSON(rs, "data");
+            var result = JSONizer.toJSON(rs, "customers");
             res.status(200);
             res.body(result);
             return result;
@@ -105,9 +106,9 @@ class Database {
         return "";
     }
 
-    public String getIngredients(Request req, Response res) {
+    public String getMaterials(Request req, Response res) {
         res.type("application/json");
-        var query = "SELECT material_name, amount, unit\n" + "FROM customers\n";
+        var query = "SELECT material_name AS name, amount AS quantity, unit\n" + "FROM materials\n";
         var params = new LinkedList<String>();
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;
@@ -115,7 +116,7 @@ class Database {
                 ps.setString(++index, param);
             }
             var rs = ps.executeQuery();
-            var result = JSONizer.toJSON(rs, "data");
+            var result = JSONizer.toJSON(rs, "ingredients");
             res.status(200);
             res.body(result);
             return result;
