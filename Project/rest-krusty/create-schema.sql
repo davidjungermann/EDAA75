@@ -70,3 +70,5 @@ FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name),
 FOREIGN KEY (material_id) REFERENCES materials(material_id),
 PRIMARY KEY(material_id, cookie_name)
 );
+
+

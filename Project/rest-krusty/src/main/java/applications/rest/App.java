@@ -27,7 +27,7 @@ public class App {
         get("/cookies", (req, res) -> db.getCookies(req, res));
         get("/recipes", (req, res) -> db.getRecipes(req, res)); 
         post("/pallets", (req, res) -> db.postPallet(req, res));
-        //get("/pallets", (req, res) -> db.getPallets(req, res)); 
+        get("/pallets", (req, res) -> db.getPallets(req, res)); 
     }
 }
 
@@ -104,7 +104,7 @@ class Database {
 
             "INSERT INTO cookies (cookie_name)" + "VALUES('Nut ring')",
             "INSERT INTO cookies (cookie_name)" + "VALUES('Nut cookie')",
-            "INSERT INTO cookies (cookie_name)" + "VALUES('Amernis')",
+            "INSERT INTO cookies (cookie_name)" + "VALUES('Amneris')",
             "INSERT INTO cookies (cookie_name)" + "VALUES('Tango')",
             "INSERT INTO cookies (cookie_name)" + "VALUES('Almond delight')",
             "INSERT INTO cookies (cookie_name)" + "VALUES('Berliner')",
@@ -291,6 +291,28 @@ class Database {
         }
         res.status(418);
         return "Error";
+    }
+
+    public String getPallets(Request req, Response res) {
+        res.type("application/json");
+        var query = "SELECT pallet_id AS id, cookie_name AS cookie, production_date AS ProductionDate, blocked, customer_id as customer\n" 
+                 + "FROM pallets\n" + "LEFT JOIN orders\n" + "USING (order_nbr);"; 
+        var params = new LinkedList<String>();
+        try (var ps = conn.prepareStatement(query)) {
+            var index = 0;
+            for (var param : params) {
+                ps.setString(++index, param);
+            }
+            var rs = ps.executeQuery();
+            var result = JSONizer.toJSON(rs, "recipes");
+            res.status(200);
+            res.body(result);
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.status(500);
+        }
+        return "";
     }
 
 }
