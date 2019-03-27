@@ -27,6 +27,7 @@ public class App {
         get("/ingredients", (req, res) -> db.getMaterials(req, res));
         get("/cookies", (req, res) -> db.getCookies(req, res));
         get("/recipes", (req, res) -> db.getRecipes(req, res)); 
+        post("/pallets", (req, res) -> db.postPallet(req, res));
         //get("/pallets", (req, res) -> db.getPallets(req, res)); 
     }
 }
@@ -260,6 +261,41 @@ class Database {
             e.printStackTrace();
         }
         return "";
+    }
+
+    String postPallet(Request req, Response res) {
+        res.type("application/json");
+        var statement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n"
+                + "VALUES  (?, CURRENT_DATE);";
+        try (var ps = conn.prepareStatement(statement)) {
+            conn.createStatement().execute("PRAGMA foreign_keys = ON");
+            ps.setString(1, req.queryParams("cookie"));
+            if (ps.executeUpdate() != 1) {
+                res.status(400);
+                Gson gson = new GsonBuilder().create();
+                return gson.toJson("status:  " + "not enough ingredients");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Gson gson = new GsonBuilder().create();
+            return gson.toJson("status:  " + "no such cookie");
+        }
+
+        var query = "SELECT pallet_id\n" + "FROM pallets\n" + "WHERE rowid = last_insert_rowid()";
+        try (var ps = conn.prepareStatement(query)) {
+            var rs = ps.executeQuery();
+            if (rs.next()) {
+                var id = rs.getString("pallet_id");
+                var result = String.format("\npallets/%s\n }", id);
+                res.status(201);
+                res.body(result);
+                return result;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        res.status(418);
+        return "Error";
     }
 
 }

@@ -16,7 +16,7 @@ PRIMARY KEY (cookie_name)
 );
 
 CREATE TABLE pallets(
-pallet_nbr DEFAULT (lower(hex(randomblob(16)))),
+pallet_id DEFAULT (lower(hex(randomblob(16)))),
 cookie_name TEXT,
 order_nbr  INT,
 production_date DATE,
@@ -24,7 +24,7 @@ location TEXT,
 delivery_time TIME, 
 delivery_date DATE, 
 blocked BOOLEAN DEFAULT false,
-PRIMARY KEY (pallet_nbr),
+PRIMARY KEY (pallet_id),
 FOREIGN KEY (order_nbr) REFERENCES orders(order_nbr),
 FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name) 
 );
