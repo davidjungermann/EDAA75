@@ -242,7 +242,8 @@ class Database {
     public String getRecipes(Request req, Response res) {
         res.type("application/json");
         var query = "SELECT cookie_name AS cookie, material_name AS ingredient, ingredient_amount AS quantity, unit\n" 
-                 + "FROM cookies\n" + "JOIN ingredients\n" + "USING (cookie_name)\n" + "JOIN materials\n" + "USING (material_id)";
+                 + "FROM cookies\n" + "JOIN ingredients\n" + "USING (cookie_name)\n" + "JOIN materials\n" + "USING (material_id)"
+                 + "ORDER BY cookie, ingredient";
         var params = new LinkedList<String>();
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;
