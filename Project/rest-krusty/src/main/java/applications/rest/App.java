@@ -26,7 +26,8 @@ public class App {
         get("/customers", (req, res) -> db.getCustomers(req, res));
         get("/ingredients", (req, res) -> db.getMaterials(req, res));
         get("/cookies", (req, res) -> db.getCookies(req, res));
-        get("/recipes", (req, res) -> db.getRecipes(req, res));  
+        get("/recipes", (req, res) -> db.getRecipes(req, res)); 
+        //get("/pallets", (req, res) -> db.getPallets(req, res)); 
     }
 }
 
@@ -98,21 +99,21 @@ class Database {
             "DELETE FROM cookies", "DELETE FROM pallets", "DELETE FROM orders",
             "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials", "DELETE FROM ingredients",
             
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(1, 'Finkakor AB', 'Helsingborg')",
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(2, 'Småbröd AB', 'Malmö')",
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(3, 'Kaffebröd AB', 'Landskrona')",
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(4, 'Bjudkakor AB', 'Ystad')",
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(5, 'Kalaskakor AB', 'Trelleborg')",
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(6, 'Partykakor AB', 'Kristianstad')",
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES(7, 'Gästkakor AB', 'Hässleholm')",
-            "INSERT INTO customers (customer_id, customer_name, address)" +  "VALUES (8, 'Skånekakor AB', 'Perstorp')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES('Finkakor AB', 'Helsingborg')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES('Småbröd AB', 'Malmö')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES('Kaffebröd AB', 'Landskrona')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES('Bjudkakor AB', 'Ystad')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES('Kalaskakor AB', 'Trelleborg')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES('Partykakor AB', 'Kristianstad')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES('Gästkakor AB', 'Hässleholm')",
+            "INSERT INTO customers (customer_name, address)" +  "VALUES ('Skånekakor AB', 'Perstorp')",
 
-            "INSERT INTO cookies (cookie_id, cookie_name)" + "VALUES(1, 'Nut ring')",
-            "INSERT INTO cookies (cookie_id, cookie_name)" + "VALUES(2, 'Nut cookie')",
-            "INSERT INTO cookies (cookie_id, cookie_name)" + "VALUES(3, 'Amernis')",
-            "INSERT INTO cookies (cookie_id, cookie_name)" + "VALUES(4, 'Tango')",
-            "INSERT INTO cookies (cookie_id, cookie_name)" + "VALUES(5, 'Almond delight')",
-            "INSERT INTO cookies (cookie_id, cookie_name)" + "VALUES(6, 'Berliner')",
+            "INSERT INTO cookies (cookie_name)" + "VALUES('Nut ring')",
+            "INSERT INTO cookies (cookie_name)" + "VALUES('Nut cookie')",
+            "INSERT INTO cookies (cookie_name)" + "VALUES('Amernis')",
+            "INSERT INTO cookies (cookie_name)" + "VALUES('Tango')",
+            "INSERT INTO cookies (cookie_name)" + "VALUES('Almond delight')",
+            "INSERT INTO cookies (cookie_name)" + "VALUES('Berliner')",
              
             "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(1, 'Flour', 100000, 'g')",
             "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(2, 'Butter', 100000, 'g')",
@@ -134,37 +135,37 @@ class Database {
             "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(18, 'Cinnamon', 100000, 'g')",
             "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(19, 'Vanilla sugar', 100000, 'g')",
 
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (1, 1, 450)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (1, 2, 450)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (1, 3, 190)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (1, 4, 225)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (2, 5, 750)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (2, 6, 625)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (2, 7, 125)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (2, 8, 375)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (2, 9, 350)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (2, 10, 50)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (3, 11, 750)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (3, 2, 250)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (3, 12, 250)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (3, 13, 25)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (3, 14, 25)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (4, 2, 200)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (4, 8, 250)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (4, 1, 300)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (4, 15, 4)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (4, 16, 2)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (5, 2, 400)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (5, 8, 270)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (5, 17, 279)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (5, 1, 400)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (5, 18, 10)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 1, 350)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 2, 250)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 3, 100)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 12, 50)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 19, 5)",
-            "INSERT INTO ingredients (cookie_id, material_id, ingredient_amount)" + "VALUES (6, 10, 50)" };
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 1, 450)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 2, 450)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 3, 190)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 4, 225)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 5, 750)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 6, 625)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 7, 125)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 8, 375)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 9, 350)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 10, 50)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 11, 750)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 2, 250)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 12, 250)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 13, 25)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 14, 25)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 2, 200)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 8, 250)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 1, 300)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 15, 4)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 16, 2)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 2, 400)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 8, 270)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 17, 279)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 1, 400)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 18, 10)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 1, 350)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 2, 250)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 3, 100)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 12, 50)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 19, 5)",
+            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 10, 50)" };
            
         try (var ps = conn.createStatement()) { 
             for (String statement : statements) {
@@ -172,7 +173,7 @@ class Database {
             }
             res.status(200);
             Gson gson = new GsonBuilder().create();
-            return gson.toJson("status: " + "ok");
+            return gson.toJson("status:  " + "ok");
         } catch (SQLException e) {
             e.printStackTrace();
             res.status(500);
@@ -243,7 +244,7 @@ class Database {
     public String getRecipes(Request req, Response res) {
         res.type("application/json");
         var query = "SELECT cookie_name AS cookie, material_name AS ingredient, ingredient_amount AS quantity, unit\n" 
-                 + "FROM cookies\n" + "JOIN ingredients\n" + "USING (cookie_id)\n" + "JOIN materials\n" + "USING (material_id)";
+                 + "FROM cookies\n" + "JOIN ingredients\n" + "USING (cookie_name)\n" + "JOIN materials\n" + "USING (material_id)";
         var params = new LinkedList<String>();
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;

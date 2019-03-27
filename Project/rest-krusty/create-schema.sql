@@ -11,23 +11,22 @@ DROP TABLE IF EXISTS materials;
 PRAGMA foreign_keys = ON; 
 
 CREATE TABLE cookies(
-cookie_id INT,
 cookie_name TEXT,
-PRIMARY KEY (cookie_id)
+PRIMARY KEY (cookie_name)
 );
 
 CREATE TABLE pallets(
 pallet_nbr DEFAULT (lower(hex(randomblob(16)))),
-cookie_id  INT, 
+cookie_name TEXT,
 order_nbr  INT,
 production_date DATE,
 location TEXT,
 delivery_time TIME, 
 delivery_date DATE, 
-blocked TEXT,
+blocked BOOLEAN DEFAULT false,
 PRIMARY KEY (pallet_nbr),
-FOREIGN KEY (cookie_id) REFERENCES cookies(cookie_id), 
-FOREIGN KEY (order_nbr) REFERENCES orders(order_id)
+FOREIGN KEY (order_nbr) REFERENCES orders(order_nbr),
+FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name) 
 );
 
 CREATE TABLE orders(
@@ -39,10 +38,10 @@ FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE order_sizes(
-cookie_id INT,
+cookie_name TEXT,
 order_nbr INT,
 pallet_amount INT CHECK(pallet_amount >= 1),
-FOREIGN KEY(cookie_id) REFERENCES cookies(cookie_id),
+FOREIGN KEY(cookie_name) REFERENCES cookies(cookie_name),
 FOREIGN KEY(order_nbr) REFERENCES orders(order_nbr)
 );
 
@@ -64,12 +63,12 @@ PRIMARY KEY (material_id)
 );
 
 CREATE TABLE ingredients(
-cookie_id INT,
+cookie_name TEXT,
 material_id INT,
 ingredient_amount INT CHECK(ingredient_amount >= 0),
-FOREIGN KEY (cookie_id) REFERENCES cookies(cookie_id),
+FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name),
 FOREIGN KEY (material_id) REFERENCES materials(material_id),
-PRIMARY KEY(material_id, cookie_id)
+PRIMARY KEY(material_id, cookie_name)
 );
 
 
