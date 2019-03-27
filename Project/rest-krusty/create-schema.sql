@@ -19,7 +19,7 @@ CREATE TABLE pallets(
 pallet_id DEFAULT (lower(hex(randomblob(16)))),
 cookie_name TEXT,
 order_nbr  INT,
-production_date DATE,
+production_date DATE DEFAULT CURRENT_DATE,
 location TEXT,
 delivery_time TIME, 
 delivery_date DATE, 
@@ -70,5 +70,3 @@ FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name),
 FOREIGN KEY (material_id) REFERENCES materials(material_id),
 PRIMARY KEY(material_id, cookie_name)
 );
-
-

@@ -21,7 +21,6 @@ public class App {
     public static void main(String[] args) {
         var db = new Database("krusty.sqlite");
         port(8888);
-        get("/ping", (req, res) -> db.ping(req, res));
         post("/reset", (req, res) -> db.reset(req, res));
         get("/customers", (req, res) -> db.getCustomers(req, res));
         get("/ingredients", (req, res) -> db.getMaterials(req, res));
@@ -86,12 +85,6 @@ class Database {
      */
     public boolean isConnected() {
         return conn != null;
-    }
-
-    String ping(Request req, Response res) {
-        var result = new String("\npong" + " " + res.status()) + "\n";
-        res.status(200);
-        return result;
     }
 
     String reset(Request req, Response res) {
@@ -170,15 +163,16 @@ class Database {
            
         try (var ps = conn.createStatement()) { 
             for (String statement : statements) {
-               ps.execute(statement);
+               ps.addBatch(statement);
             }
+            ps.executeBatch();
             res.status(200);
-            Gson gson = new GsonBuilder().create();
-            return gson.toJson("status:  " + "ok");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            return gson.toJson("status: " +  "ok");
         } catch (SQLException e) {
             e.printStackTrace();
             res.status(500);
-            return "\nCould not insert values \n";
+            return "";
         }
     }
 
@@ -198,6 +192,7 @@ class Database {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+            res.status(500);
         }
         return "";
     }
@@ -218,6 +213,7 @@ class Database {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+            res.status(500);
         }
         return "";
     }
@@ -238,6 +234,7 @@ class Database {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+            res.status(500);
         }
         return "";
       }
@@ -259,12 +256,14 @@ class Database {
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
+            res.status(500);
         }
         return "";
     }
 
     String postPallet(Request req, Response res) {
         res.type("application/json");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         var statement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n"
                 + "VALUES  (?, CURRENT_DATE);";
         try (var ps = conn.prepareStatement(statement)) {
@@ -272,12 +271,10 @@ class Database {
             ps.setString(1, req.queryParams("cookie"));
             if (ps.executeUpdate() != 1) {
                 res.status(400);
-                Gson gson = new GsonBuilder().create();
-                return gson.toJson("status:  " + "not enough ingredients");
+                return gson.toJson("status:  " + "not enough ingredients"); // todo!!!!! 
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Gson gson = new GsonBuilder().create();
             return gson.toJson("status:  " + "no such cookie");
         }
 
@@ -286,10 +283,8 @@ class Database {
             var rs = ps.executeQuery();
             if (rs.next()) {
                 var id = rs.getString("pallet_id");
-                var result = String.format("\npallets/%s\n }", id);
                 res.status(201);
-                res.body(result);
-                return result;
+                return gson.toJson("status: " + "ok" + " " + "id: " + "" + id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
