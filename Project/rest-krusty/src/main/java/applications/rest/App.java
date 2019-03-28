@@ -278,7 +278,6 @@ class Database {
             e.printStackTrace();
             return gson.toJson("status:  " + "no such cookie");
         }
-
         var query = "SELECT pallet_id\n" + "FROM pallets\n" + "WHERE rowid = last_insert_rowid()";
         try (var ps = conn.prepareStatement(query)) {
             var rs = ps.executeQuery();
@@ -297,8 +296,16 @@ class Database {
     public String getPallets(Request req, Response res) {
         res.type("application/json");
         var query = "SELECT pallet_id AS id, cookie_name AS cookie, production_date AS ProductionDate, blocked, customer_id as customer\n" 
-                 + "FROM pallets\n" + "LEFT JOIN orders\n" + "USING (order_nbr);"; 
+                 + "FROM pallets\n" + "LEFT JOIN orders\n" + "USING (order_nbr)\n" + "WHERE 1=1\n"; 
         var params = new LinkedList<String>();
+        if (req.queryParams("cookie") != null) {
+            query += "AND cookie_name = ?\n";
+            params.add(req.queryParams("cookie"));
+        }
+        if (req.queryParams("blocked") != null) {
+            query += "AND blocked = ?\n";
+            params.add(req.queryParams("blocked"));
+        }
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;
             for (var param : params) {
