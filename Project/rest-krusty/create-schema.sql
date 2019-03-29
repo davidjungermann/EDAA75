@@ -71,3 +71,11 @@ FOREIGN KEY (material_id) REFERENCES materials(material_id),
 PRIMARY KEY(material_id, cookie_name)
 );
 
+UPDATE pallets
+SET production_date = '2018-01-01'
+WHERE cookie_name = 'Amneris' AND production_date BETWEEN '2019-03-29' AND '2019-03-29'
+
+
+
+SELECT *
+FROM pallets 

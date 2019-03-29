@@ -28,6 +28,8 @@ public class App {
         get("/recipes", (req, res) -> db.getRecipes(req, res)); 
         post("/pallets", (req, res) -> db.postPallet(req, res));
         get("/pallets", (req, res) -> db.getPallets(req, res)); 
+        post("/block/:cookie/:from/:to", (req, res) -> db.blockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
+        post("/unblock/:cookie/:from/:to", (req, res) -> db.unBlockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
     }
 }
 
@@ -331,6 +333,37 @@ class Database {
         return "";
     }
 
+    String blockPallets(Request req, Response res, String cookie, String from, String to) {
+        res.type("application/json");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        var statement = "UPDATE pallets \n" + "SET blocked = true\n"
+                + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?\n";
+        try (var ps = conn.prepareStatement(statement)) {
+            ps.setString(1, cookie);
+            ps.setString(2, from);
+            ps.setString(3, to);
+            ps.execute();
+        } catch (SQLException e) {
+            return "";
+        }
+        return gson.toJson("status: " +  "ok");
+    }
+
+    String unBlockPallets(Request req, Response res, String cookie, String from, String to) {
+        res.type("application/json");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        var statement = "UPDATE pallets \n" + "SET blocked = false\n"
+                + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?\n";
+        try (var ps = conn.prepareStatement(statement)) {
+            ps.setString(1, cookie);
+            ps.setString(2, from);
+            ps.setString(3, to);
+            ps.execute();
+        } catch (SQLException e) {
+            return "";
+        }
+        return gson.toJson("status: " +  "ok");
+    }
 }
 
 /**
