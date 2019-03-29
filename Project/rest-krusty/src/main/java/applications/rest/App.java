@@ -299,12 +299,20 @@ class Database {
                  + "FROM pallets\n" + "LEFT JOIN orders\n" + "USING (order_nbr)\n" + "WHERE 1=1\n"; 
         var params = new LinkedList<String>();
         if (req.queryParams("cookie") != null) {
-            query += "AND cookie_name = ?\n";
+            query += "AND cookie = ? \n";
             params.add(req.queryParams("cookie"));
         }
         if (req.queryParams("blocked") != null) {
-            query += "AND blocked = ?\n";
+            query += "AND blocked = ? \n";
             params.add(req.queryParams("blocked"));
+        }
+        if (req.queryParams("before") != null) {
+            query += "AND production_date < ? \n";
+            params.add(req.queryParams("before"));
+        }
+        if (req.queryParams("after") != null) {
+            query += "AND production_date > ? \n";
+            params.add(req.queryParams("after"));
         }
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;
