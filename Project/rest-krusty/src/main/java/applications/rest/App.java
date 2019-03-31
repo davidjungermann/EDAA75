@@ -280,7 +280,7 @@ class Database {
     String postPallet(Request req, Response res) {
         res.type("application/json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        var quantityQuery = "SELECT material_amount, ingredient_amount * 54 AS ingredient_amount_pallet\n"
+        var quantityQuery = "SELECT material_id, material_amount, ingredient_amount * 54 AS ingredient_amount_pallet\n"
                 + "FROM materials\n" + "JOIN ingredients\n" + "USING (material_id)\n" + "WHERE cookie_name = ?";
         try (var ps = conn.prepareStatement(quantityQuery)) {
             ps.setString(1, req.queryParams("cookie"));
@@ -290,22 +290,31 @@ class Database {
             while (rs.next()) {
                 int i = 1;
                 while (i < numberOfColumns) {
+                    int matId = rs.getInt("material_id");
                     int matAmt = rs.getInt("material_amount");
                     int ingAmt = rs.getInt("ingredient_amount_pallet");
                     if (ingAmt > matAmt) {
                         res.status(400);
                         return gson.toJson("status:  " + "not enough ingredients");
                     }
+                    var updateStatement = "UPDATE materials\n" + "SET material_amount = (material_amount - ?)\n" + "WHERE material_id = ?;";
+                    try (var ps2 = conn.prepareStatement(updateStatement)) {
+                        ps2.setInt(1, ingAmt);
+                        ps2.setInt(2, matId);
+                        ps2.execute();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     i++;
                 }
             }
+            
         } catch (SQLException e) {
             e.printStackTrace();
-            return "";
         }
 
-        var statement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n" + "VALUES  (?, CURRENT_DATE);";
-        try (var ps = conn.prepareStatement(statement)) {
+        var insertStatement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n" + "VALUES  (?, CURRENT_DATE);";
+        try (var ps = conn.prepareStatement(insertStatement)) {
             conn.createStatement().execute("PRAGMA foreign_keys = ON");
             ps.setString(1, req.queryParams("cookie"));
             ps.executeUpdate();
@@ -324,10 +333,8 @@ class Database {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return "kommer till utskrift";
         }
-        res.status(418);
-        return "Error";
+        return "";
     }
 
     public String getPallets(Request req, Response res) {
