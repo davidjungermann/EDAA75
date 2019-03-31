@@ -6,10 +6,14 @@ package applications.rest;
 import java.sql.*;
 import java.util.*;
 import spark.*;
+import spark.Redirect.Status;
+
 import static spark.Spark.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,10 +32,8 @@ public class App {
         get("/recipes", (req, res) -> db.getRecipes(req, res));
         post("/pallets", (req, res) -> db.postPallet(req, res));
         get("/pallets", (req, res) -> db.getPallets(req, res));
-        post("/block/:cookie/:from/:to",
-                (req, res) -> db.blockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
-        post("/unblock/:cookie/:from/:to", (req, res) -> db.unblockPallets(req, res, req.params(":cookie"),
-                req.params(":from"), req.params(":to")));
+        post("/block/:cookie/:from/:to", (req, res) -> db.blockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
+        post("/unblock/:cookie/:from/:to", (req, res) -> db.unblockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
     }
 }
 
@@ -93,8 +95,9 @@ class Database {
 
     String reset(Request req, Response res) {
         res.type("application/json");
-        String[] statements = { "PRAGMA foreign_keys = OFF;", "DELETE FROM cookies", "DELETE FROM pallets", "DELETE FROM orders",
-                "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials", "DELETE FROM ingredients",
+        String[] statements = { "PRAGMA foreign_keys = OFF;", "DELETE FROM cookies", "DELETE FROM pallets",
+                "DELETE FROM orders", "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials",
+                "DELETE FROM ingredients",
 
                 "INSERT INTO customers (customer_name, address)" + "VALUES('Finkakor AB', 'Helsingborg')",
                 "INSERT INTO customers (customer_name, address)" + "VALUES('Småbröd AB', 'Malmö')",
@@ -192,8 +195,8 @@ class Database {
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 3, 100)",
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 12, 50)",
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 19, 5)",
-                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
-                        + "VALUES ('Berliner', 10, 50)", "PRAGMA foreign_keys = ON;" };
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 10, 50)",
+                "PRAGMA foreign_keys = ON;" };
 
         try (var ps = conn.createStatement()) {
             for (String statement : statements) {
@@ -201,8 +204,9 @@ class Database {
             }
             ps.executeBatch();
             res.status(200);
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            return gson.toJson("status: " + "ok");
+            JsonObject item = new JsonObject();
+            item.addProperty("status", "ok");
+            return item.toString();
         } catch (SQLException e) {
             e.printStackTrace();
             res.status(500);
@@ -279,57 +283,55 @@ class Database {
 
     String postPallet(Request req, Response res) {
         res.type("application/json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        var quantityQuery = "SELECT material_id, material_amount, ingredient_amount * 54 AS ingredient_amount_pallet\n"
-                + "FROM materials\n" + "JOIN ingredients\n" + "USING (material_id)\n" + "WHERE cookie_name = ?";
+        JsonObject item = new JsonObject();
+        var quantityQuery = "SELECT material_id, material_amount, ingredient_amount\n" + "FROM materials\n"
+                + "JOIN ingredients\n" + "USING (material_id)\n" + "WHERE cookie_name = ?";
         try (var ps = conn.prepareStatement(quantityQuery)) {
             ps.setString(1, req.queryParams("cookie"));
             var rs = ps.executeQuery();
-            ResultSetMetaData metadata = rs.getMetaData();
-            int numberOfColumns = metadata.getColumnCount();
             while (rs.next()) {
-                int i = 1;
-                while (i < numberOfColumns) {
-                    int matId = rs.getInt("material_id");
-                    int matAmt = rs.getInt("material_amount");
-                    int ingAmt = rs.getInt("ingredient_amount_pallet");
-                    if (ingAmt > matAmt) {
-                        res.status(400);
-                        return gson.toJson("status:  " + "not enough ingredients");
-                    }
-                    var updateStatement = "UPDATE materials\n" + "SET material_amount = (material_amount - ?)\n" + "WHERE material_id = ?;";
-                    try (var ps2 = conn.prepareStatement(updateStatement)) {
-                        ps2.setInt(1, ingAmt);
-                        ps2.setInt(2, matId);
-                        ps2.execute();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    i++;
+                int matId = rs.getInt("material_id");
+                int matAmt = rs.getInt("material_amount");
+                int ingAmt = rs.getInt("ingredient_amount") * 54;
+                if (ingAmt > matAmt) {
+                    res.status(400);
+                    item.addProperty("status", "not enough ingredients");
+                    return item.toString();
+                }
+                var updateStatement = "UPDATE materials\n" + "SET material_amount = (material_amount - ?)\n"
+                        + "WHERE material_id = ?;";
+                try (var ps2 = conn.prepareStatement(updateStatement)) {
+                    ps2.setInt(1, ingAmt);
+                    ps2.setInt(2, matId);
+                    ps2.execute();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
-            
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        var insertStatement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n" + "VALUES  (?, CURRENT_DATE);";
+        var insertStatement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n"
+                + "VALUES  (?, CURRENT_DATE);";
         try (var ps = conn.prepareStatement(insertStatement)) {
-            conn.createStatement().execute("PRAGMA foreign_keys = ON");
             ps.setString(1, req.queryParams("cookie"));
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            return gson.toJson("status:  " + "no such cookie");
+            item.addProperty("status", "no such cookie");
+            return item.toString();
         }
-
         var query = "SELECT pallet_id\n" + "FROM pallets\n" + "WHERE rowid = last_insert_rowid()";
         try (var ps = conn.prepareStatement(query)) {
             var rs = ps.executeQuery();
             if (rs.next()) {
                 var id = rs.getString("pallet_id");
                 res.status(201);
-                return gson.toJson("status: " + "ok" + " " + "id: " + "" + id);
+                JsonArray array = new JsonArray();
+                item.addProperty("status", "ok");
+                item.addProperty("id", id);
+                array.add(item);
+                return item.toString();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -358,6 +360,7 @@ class Database {
             query += "AND production_date > ? \n";
             params.add(req.queryParams("after"));
         }
+
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;
             for (var param : params) {
@@ -377,9 +380,8 @@ class Database {
 
     String blockPallets(Request req, Response res, String cookie, String from, String to) {
         res.type("application/json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         var statement = "UPDATE pallets \n" + "SET blocked = true\n"
-                + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?\n";
+                + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?;";
         try (var ps = conn.prepareStatement(statement)) {
             ps.setString(1, cookie);
             ps.setString(2, from);
@@ -388,14 +390,15 @@ class Database {
         } catch (SQLException e) {
             return "";
         }
-        return gson.toJson("status: " + "ok");
+        JsonObject item = new JsonObject();
+        item.addProperty("status", "ok");
+        return item.toString();
     }
 
     String unblockPallets(Request req, Response res, String cookie, String from, String to) {
         res.type("application/json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         var statement = "UPDATE pallets \n" + "SET blocked = false\n"
-                + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?\n";
+                + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?;";
         try (var ps = conn.prepareStatement(statement)) {
             ps.setString(1, cookie);
             ps.setString(2, from);
@@ -404,9 +407,10 @@ class Database {
         } catch (SQLException e) {
             return "";
         }
-        return gson.toJson("status: " + "ok");
+        JsonObject item = new JsonObject();
+        item.addProperty("status", "ok");
+        return item.toString();
     }
-
 }
 
 /**

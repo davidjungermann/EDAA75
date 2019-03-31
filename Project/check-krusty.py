@@ -151,7 +151,7 @@ def check_blocking():
 
 
 def main():
-    #check_reset()
+    check_reset()
     check_cookies({'Tango',
                    'Nut ring',
                    'Nut cookie',
