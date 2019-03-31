@@ -93,7 +93,7 @@ class Database {
 
     String reset(Request req, Response res) {
         res.type("application/json");
-        String[] statements = { "DELETE FROM cookies", "DELETE FROM pallets", "DELETE FROM orders",
+        String[] statements = { "PRAGMA foreign_keys = OFF;", "DELETE FROM cookies", "DELETE FROM pallets", "DELETE FROM orders",
                 "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials", "DELETE FROM ingredients",
 
                 "INSERT INTO customers (customer_name, address)" + "VALUES('Finkakor AB', 'Helsingborg')",
@@ -193,7 +193,7 @@ class Database {
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 12, 50)",
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 19, 5)",
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
-                        + "VALUES ('Berliner', 10, 50)" };
+                        + "VALUES ('Berliner', 10, 50)", "PRAGMA foreign_keys = ON;" };
 
         try (var ps = conn.createStatement()) {
             for (String statement : statements) {
