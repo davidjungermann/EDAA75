@@ -93,7 +93,7 @@ class Database {
 
     String reset(Request req, Response res) {
         res.type("application/json");
-        String[] statements = { "PRAGMA foreign_keys = OFF;", "DELETE FROM cookies", "DELETE FROM pallets",
+        String[] statements = {"DELETE FROM cookies", "DELETE FROM pallets",
                 "DELETE FROM orders", "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials",
                 "DELETE FROM ingredients",
 
@@ -114,43 +114,43 @@ class Database {
                 "INSERT INTO cookies (cookie_name)" + "VALUES('Berliner')",
 
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(1, 'Flour', 100 000, 'g')",
+                        + "VALUES(1, 'Flour', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(2, 'Butter', 100 000, 'g')",
+                        + "VALUES(2, 'Butter', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(3, 'Icing sugar', 100 000, 'g')",
+                        + "VALUES(3, 'Icing sugar', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(4, 'Roasted, chopped nuts', 100 000, 'g')",
+                        + "VALUES(4, 'Roasted, chopped nuts', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(5, 'Fine-ground nuts', 100 000, 'g')",
+                        + "VALUES(5, 'Fine-ground nuts', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(6, 'Ground, roasted nuts', 100 000, 'g')",
+                        + "VALUES(6, 'Ground, roasted nuts', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(7, 'Bread crumbs', 100 000, 'g')",
+                        + "VALUES(7, 'Bread crumbs', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(8, 'Sugar', 100 000, 'g')",
+                        + "VALUES(8, 'Sugar', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(9, 'Egg whites', 100 000, 'ml')",
+                        + "VALUES(9, 'Egg whites', 100000, 'ml')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(10, 'Chocolate', 100 000, 'g')",
+                        + "VALUES(10, 'Chocolate', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(11, 'Marzipan', 100 000, 'g')",
+                        + "VALUES(11, 'Marzipan', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(12, 'Eggs', 100 000, 'g')",
+                        + "VALUES(12, 'Eggs', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(13, 'Potato starch', 100 000, 'g')",
+                        + "VALUES(13, 'Potato starch', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(14, 'Wheat flour', 100 000, 'g')",
+                        + "VALUES(14, 'Wheat flour', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(15, 'Sodium bicarbonate', 100 000, 'g')",
+                        + "VALUES(15, 'Sodium bicarbonate', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(16, 'Vanilla', 100 000, 'g')",
+                        + "VALUES(16, 'Vanilla', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(17, 'Chopped almonds', 100 000, 'g')",
+                        + "VALUES(17, 'Chopped almonds', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(18, 'Cinnamon', 100 000, 'g')",
+                        + "VALUES(18, 'Cinnamon', 100000, 'g')",
                 "INSERT INTO materials (material_id, material_name, material_amount, unit)"
-                        + "VALUES(19, 'Vanilla sugar', 100 000, 'g')",
+                        + "VALUES(19, 'Vanilla sugar', 100000, 'g')",
 
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 1, 450)",
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 2, 450)",
@@ -193,8 +193,7 @@ class Database {
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 3, 100)",
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 12, 50)",
                 "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 19, 5)",
-                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 10, 50)",
-                "PRAGMA foreign_keys = ON" };
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 10, 50)"};
 
         try (var ps = conn.createStatement()) {
             for (String statement : statements) {
@@ -281,40 +280,22 @@ class Database {
     String postPallet(Request req, Response res) {
         res.type("application/json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        var quantityQuery = "SELECT material_amount, ingredient_amount * 54 AS ingredient_amount_pallet\n"
-                + "FROM materials\n" + "JOIN ingredients\n" + "USING (material_id)\n" + "WHERE cookie_name = ?";
-        try (var ps = conn.prepareStatement(quantityQuery)) {
-            ps.setString(1, req.queryParams("cookie"));
-            var rs = ps.executeQuery();
-            ResultSetMetaData metadata = rs.getMetaData();
-            int numberOfColumns = metadata.getColumnCount();
-            while (rs.next()) {
-                int i = 1;
-                while(i < numberOfColumns){
-                    int matAmt = rs.getInt("material_amount");
-                    int ingAmt = rs.getInt("ingredient_amount_pallet");
-                    if(ingAmt > matAmt){
-                        res.status(400);
-                        return gson.toJson("status:  " + "not enough ingredients");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "";
-        }
-
-        var statement = "INSERT \n" + "INTO pallets(cookie_name)\n" + "VALUES  (?);";
+        var statement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n"
+                + "VALUES  (?, CURRENT_DATE);";
         try (var ps = conn.prepareStatement(statement)) {
             conn.createStatement().execute("PRAGMA foreign_keys = ON");
             ps.setString(1, req.queryParams("cookie"));
+            if (ps.executeUpdate() != 1) {
+                res.status(400);
+                return gson.toJson("status:  " + "not enough ingredients"); // todo!!!!! 
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            res.status(404);
             return gson.toJson("status:  " + "no such cookie");
         }
-        var idQuery = "SELECT pallet_id\n" + "FROM pallets\n" + "WHERE rowid = last_insert_rowid()";
-        try (var ps = conn.prepareStatement(idQuery)) {
+
+        var query = "SELECT pallet_id\n" + "FROM pallets\n" + "WHERE rowid = last_insert_rowid()";
+        try (var ps = conn.prepareStatement(query)) {
             var rs = ps.executeQuery();
             if (rs.next()) {
                 var id = rs.getString("pallet_id");
@@ -323,7 +304,6 @@ class Database {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            res.status(400);
         }
         res.status(418);
         return "Error";
