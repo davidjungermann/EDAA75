@@ -65,11 +65,12 @@ PRIMARY KEY (material_id)
 CREATE TABLE ingredients(
 cookie_name TEXT,
 material_id INT,
-ingredient_amount INT,
+ingredient_amount INT   ,
 FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name),
 FOREIGN KEY (material_id) REFERENCES materials(material_id),
 PRIMARY KEY(material_id, cookie_name)
 );
+
     
 
 
