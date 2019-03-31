@@ -25,11 +25,13 @@ public class App {
         get("/customers", (req, res) -> db.getCustomers(req, res));
         get("/ingredients", (req, res) -> db.getMaterials(req, res));
         get("/cookies", (req, res) -> db.getCookies(req, res));
-        get("/recipes", (req, res) -> db.getRecipes(req, res)); 
+        get("/recipes", (req, res) -> db.getRecipes(req, res));
         post("/pallets", (req, res) -> db.postPallet(req, res));
-        get("/pallets", (req, res) -> db.getPallets(req, res)); 
-        post("/block/:cookie/:from/:to", (req, res) -> db.blockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
-        post("/unblock/:cookie/:from/:to", (req, res) -> db.unBlockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
+        get("/pallets", (req, res) -> db.getPallets(req, res));
+        post("/block/:cookie/:from/:to",
+                (req, res) -> db.blockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
+        post("/unblock/:cookie/:from/:to", (req, res) -> db.unblockPallets(req, res, req.params(":cookie"),
+                req.params(":from"), req.params(":to")));
     }
 }
 
@@ -91,86 +93,117 @@ class Database {
 
     String reset(Request req, Response res) {
         res.type("application/json");
-        String[] statements = {
-            "DELETE FROM cookies", "DELETE FROM pallets", "DELETE FROM orders",
-            "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials", "DELETE FROM ingredients",
-            
-            "INSERT INTO customers (customer_name, address)" +  "VALUES('Finkakor AB', 'Helsingborg')",
-            "INSERT INTO customers (customer_name, address)" +  "VALUES('Småbröd AB', 'Malmö')",
-            "INSERT INTO customers (customer_name, address)" +  "VALUES('Kaffebröd AB', 'Landskrona')",
-            "INSERT INTO customers (customer_name, address)" +  "VALUES('Bjudkakor AB', 'Ystad')",
-            "INSERT INTO customers (customer_name, address)" +  "VALUES('Kalaskakor AB', 'Trelleborg')",
-            "INSERT INTO customers (customer_name, address)" +  "VALUES('Partykakor AB', 'Kristianstad')",
-            "INSERT INTO customers (customer_name, address)" +  "VALUES('Gästkakor AB', 'Hässleholm')",
-            "INSERT INTO customers (customer_name, address)" +  "VALUES ('Skånekakor AB', 'Perstorp')",
+        String[] statements = { "PRAGMA foreign_keys = OFF;", "DELETE FROM cookies", "DELETE FROM pallets",
+                "DELETE FROM orders", "DELETE FROM order_sizes", "DELETE FROM customers", "DELETE FROM materials",
+                "DELETE FROM ingredients",
 
-            "INSERT INTO cookies (cookie_name)" + "VALUES('Nut ring')",
-            "INSERT INTO cookies (cookie_name)" + "VALUES('Nut cookie')",
-            "INSERT INTO cookies (cookie_name)" + "VALUES('Amneris')",
-            "INSERT INTO cookies (cookie_name)" + "VALUES('Tango')",
-            "INSERT INTO cookies (cookie_name)" + "VALUES('Almond delight')",
-            "INSERT INTO cookies (cookie_name)" + "VALUES('Berliner')",
-             
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(1, 'Flour', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(2, 'Butter', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(3, 'Icing sugar', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(4, 'Roasted, chopped nuts', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(5, 'Fine-ground nuts', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(6, 'Ground, roasted nuts', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(7, 'Bread crumbs', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(8, 'Sugar', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(9, 'Egg whites', 100000, 'ml')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(10, 'Chocolate', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(11, 'Marzipan', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(12, 'Eggs', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(13, 'Potato starch', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(14, 'Wheat flour', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(15, 'Sodium bicarbonate', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(16, 'Vanilla', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(17, 'Chopped almonds', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(18, 'Cinnamon', 100000, 'g')",
-            "INSERT INTO materials (material_id, material_name, material_amount, unit)" + "VALUES(19, 'Vanilla sugar', 100000, 'g')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES('Finkakor AB', 'Helsingborg')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES('Småbröd AB', 'Malmö')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES('Kaffebröd AB', 'Landskrona')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES('Bjudkakor AB', 'Ystad')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES('Kalaskakor AB', 'Trelleborg')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES('Partykakor AB', 'Kristianstad')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES('Gästkakor AB', 'Hässleholm')",
+                "INSERT INTO customers (customer_name, address)" + "VALUES ('Skånekakor AB', 'Perstorp')",
 
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 1, 450)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 2, 450)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 3, 190)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 4, 225)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 5, 750)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 6, 625)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 7, 125)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 8, 375)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 9, 350)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut cookie', 10, 50)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 11, 750)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 2, 250)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 12, 250)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 13, 25)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 14, 25)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 2, 200)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 8, 250)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 1, 300)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 15, 4)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 16, 2)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 2, 400)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 8, 270)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 17, 279)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 1, 400)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Almond delight', 18, 10)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 1, 350)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 2, 250)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 3, 100)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 12, 50)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 19, 5)",
-            "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 10, 50)" };
-           
-        try (var ps = conn.createStatement()) { 
+                "INSERT INTO cookies (cookie_name)" + "VALUES('Nut ring')",
+                "INSERT INTO cookies (cookie_name)" + "VALUES('Nut cookie')",
+                "INSERT INTO cookies (cookie_name)" + "VALUES('Amneris')",
+                "INSERT INTO cookies (cookie_name)" + "VALUES('Tango')",
+                "INSERT INTO cookies (cookie_name)" + "VALUES('Almond delight')",
+                "INSERT INTO cookies (cookie_name)" + "VALUES('Berliner')",
+
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(1, 'Flour', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(2, 'Butter', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(3, 'Icing sugar', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(4, 'Roasted, chopped nuts', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(5, 'Fine-ground nuts', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(6, 'Ground, roasted nuts', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(7, 'Bread crumbs', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(8, 'Sugar', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(9, 'Egg whites', 100 000, 'ml')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(10, 'Chocolate', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(11, 'Marzipan', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(12, 'Eggs', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(13, 'Potato starch', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(14, 'Wheat flour', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(15, 'Sodium bicarbonate', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(16, 'Vanilla', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(17, 'Chopped almonds', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(18, 'Cinnamon', 100 000, 'g')",
+                "INSERT INTO materials (material_id, material_name, material_amount, unit)"
+                        + "VALUES(19, 'Vanilla sugar', 100 000, 'g')",
+
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 1, 450)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 2, 450)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 3, 190)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Nut ring', 4, 225)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Nut cookie', 5, 750)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Nut cookie', 6, 625)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Nut cookie', 7, 125)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Nut cookie', 8, 375)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Nut cookie', 9, 350)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Nut cookie', 10, 50)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 11, 750)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 2, 250)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 12, 250)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 13, 25)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Amneris', 14, 25)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 2, 200)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 8, 250)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 1, 300)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 15, 4)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Tango', 16, 2)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Almond delight', 2, 400)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Almond delight', 8, 270)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Almond delight', 17, 279)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Almond delight', 1, 400)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)"
+                        + "VALUES ('Almond delight', 18, 10)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 1, 350)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 2, 250)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 3, 100)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 12, 50)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 19, 5)",
+                "INSERT INTO ingredients (cookie_name, material_id, ingredient_amount)" + "VALUES ('Berliner', 10, 50)",
+                "PRAGMA foreign_keys = ON" };
+
+        try (var ps = conn.createStatement()) {
             for (String statement : statements) {
-               ps.addBatch(statement);
+                ps.addBatch(statement);
             }
             ps.executeBatch();
             res.status(200);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            return gson.toJson("status: " +  "ok");
+            return gson.toJson("status: " + "ok");
         } catch (SQLException e) {
             e.printStackTrace();
             res.status(500);
@@ -181,12 +214,7 @@ class Database {
     public String getCustomers(Request req, Response res) {
         res.type("application/json");
         var query = "SELECT customer_name AS name, address\n" + "FROM customers\n";
-        var params = new LinkedList<String>();
         try (var ps = conn.prepareStatement(query)) {
-            var index = 0;
-            for (var param : params) {
-                ps.setString(++index, param);
-            }
             var rs = ps.executeQuery();
             var result = JSONizer.toJSON(rs, "customers");
             res.status(200);
@@ -202,12 +230,7 @@ class Database {
     public String getMaterials(Request req, Response res) {
         res.type("application/json");
         var query = "SELECT material_name AS name, material_amount AS quantity, unit\n" + "FROM materials\n";
-        var params = new LinkedList<String>();
         try (var ps = conn.prepareStatement(query)) {
-            var index = 0;
-            for (var param : params) {
-                ps.setString(++index, param);
-            }
             var rs = ps.executeQuery();
             var result = JSONizer.toJSON(rs, "ingredients");
             res.status(200);
@@ -223,12 +246,8 @@ class Database {
     public String getCookies(Request req, Response res) {
         res.type("application/json");
         var query = "SELECT cookie_name AS name\n" + "FROM cookies\n" + "ORDER BY cookie_name\n";
-        var params = new LinkedList<String>();
         try (var ps = conn.prepareStatement(query)) {
             var index = 0;
-            for (var param : params) {
-                ps.setString(++index, param);
-            }
             var rs = ps.executeQuery();
             var result = JSONizer.toJSON(rs, "cookies");
             res.status(200);
@@ -239,19 +258,14 @@ class Database {
             res.status(500);
         }
         return "";
-      }
+    }
 
     public String getRecipes(Request req, Response res) {
         res.type("application/json");
-        var query = "SELECT cookie_name AS cookie, material_name AS ingredient, ingredient_amount AS quantity, unit\n" 
-                 + "FROM cookies\n" + "JOIN ingredients\n" + "USING (cookie_name)\n" + "JOIN materials\n" + "USING (material_id)"
-                 + "ORDER BY cookie, ingredient";
-        var params = new LinkedList<String>();
+        var query = "SELECT cookie_name AS cookie, material_name AS ingredient, ingredient_amount AS quantity, unit\n"
+                + "FROM cookies\n" + "JOIN ingredients\n" + "USING (cookie_name)\n" + "JOIN materials\n"
+                + "USING (material_id)" + "ORDER BY cookie, ingredient";
         try (var ps = conn.prepareStatement(query)) {
-            var index = 0;
-            for (var param : params) {
-                ps.setString(++index, param);
-            }
             var rs = ps.executeQuery();
             var result = JSONizer.toJSON(rs, "recipes");
             res.status(200);
@@ -267,21 +281,40 @@ class Database {
     String postPallet(Request req, Response res) {
         res.type("application/json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        var statement = "INSERT \n" + "INTO pallets(cookie_name, production_date)\n"
-                + "VALUES  (?, CURRENT_DATE);";
-        try (var ps = conn.prepareStatement(statement)) {
-            conn.createStatement().execute("PRAGMA foreign_keys = ON");
+        var quantityQuery = "SELECT material_amount, ingredient_amount * 54 AS ingredient_amount_pallet\n"
+                + "FROM materials\n" + "JOIN ingredients\n" + "USING (material_id)\n" + "WHERE cookie_name = ?";
+        try (var ps = conn.prepareStatement(quantityQuery)) {
             ps.setString(1, req.queryParams("cookie"));
-            if (ps.executeUpdate() != 1) {
-                res.status(400);
-                return gson.toJson("status:  " + "not enough ingredients"); // todo!!!!! 
+            var rs = ps.executeQuery();
+            ResultSetMetaData metadata = rs.getMetaData();
+            int numberOfColumns = metadata.getColumnCount();
+            while (rs.next()) {
+                int i = 1;
+                while(i < numberOfColumns){
+                    int matAmt = rs.getInt("material_amount");
+                    int ingAmt = rs.getInt("ingredient_amount_pallet");
+                    if(ingAmt > matAmt){
+                        res.status(400);
+                        return gson.toJson("status:  " + "not enough ingredients");
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return "";
+        }
+
+        var statement = "INSERT \n" + "INTO pallets(cookie_name)\n" + "VALUES  (?);";
+        try (var ps = conn.prepareStatement(statement)) {
+            conn.createStatement().execute("PRAGMA foreign_keys = ON");
+            ps.setString(1, req.queryParams("cookie"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.status(404);
             return gson.toJson("status:  " + "no such cookie");
         }
-        var query = "SELECT pallet_id\n" + "FROM pallets\n" + "WHERE rowid = last_insert_rowid()";
-        try (var ps = conn.prepareStatement(query)) {
+        var idQuery = "SELECT pallet_id\n" + "FROM pallets\n" + "WHERE rowid = last_insert_rowid()";
+        try (var ps = conn.prepareStatement(idQuery)) {
             var rs = ps.executeQuery();
             if (rs.next()) {
                 var id = rs.getString("pallet_id");
@@ -290,6 +323,7 @@ class Database {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            res.status(400);
         }
         res.status(418);
         return "Error";
@@ -297,8 +331,8 @@ class Database {
 
     public String getPallets(Request req, Response res) {
         res.type("application/json");
-        var query = "SELECT pallet_id AS id, cookie_name AS cookie, production_date AS ProductionDate, blocked, customer_id as customer\n" 
-                 + "FROM pallets\n" + "LEFT JOIN orders\n" + "USING (order_nbr)\n" + "WHERE 1=1\n"; 
+        var query = "SELECT pallet_id AS id, cookie_name AS cookie, production_date AS ProductionDate, blocked, customer_id as customer\n"
+                + "FROM pallets\n" + "LEFT JOIN orders\n" + "USING (order_nbr)\n" + "WHERE 1=1\n";
         var params = new LinkedList<String>();
         if (req.queryParams("cookie") != null) {
             query += "AND cookie = ? \n";
@@ -346,10 +380,10 @@ class Database {
         } catch (SQLException e) {
             return "";
         }
-        return gson.toJson("status: " +  "ok");
+        return gson.toJson("status: " + "ok");
     }
 
-    String unBlockPallets(Request req, Response res, String cookie, String from, String to) {
+    String unblockPallets(Request req, Response res, String cookie, String from, String to) {
         res.type("application/json");
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         var statement = "UPDATE pallets \n" + "SET blocked = false\n"
@@ -362,8 +396,9 @@ class Database {
         } catch (SQLException e) {
             return "";
         }
-        return gson.toJson("status: " +  "ok");
+        return gson.toJson("status: " + "ok");
     }
+
 }
 
 /**
