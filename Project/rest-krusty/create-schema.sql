@@ -23,7 +23,7 @@ production_date DATE,
 location TEXT,
 delivery_time TIME, 
 delivery_date DATE, 
-blocked BOOLEAN DEFAULT false,
+blocked TEXT DEFAULT 'false',
 PRIMARY KEY (pallet_id),
 FOREIGN KEY (order_nbr) REFERENCES orders(order_nbr),
 FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name) 
@@ -70,6 +70,8 @@ FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name),
 FOREIGN KEY (material_id) REFERENCES materials(material_id),
 PRIMARY KEY(material_id, cookie_name)
 );
+
+
 
 
 

@@ -348,9 +348,12 @@ class Database {
             query += "AND cookie = ? \n";
             params.add(req.queryParams("cookie"));
         }
-        if (req.queryParams("blocked") != null) {
-            query += "AND blocked = ? \n";
-            params.add(req.queryParams("blocked"));
+        if(req.queryParams("blocked") != null){
+            if (req.queryParams("blocked").equals("0")){
+                query += "AND blocked = 'false'\n";
+            } else {
+                query += "AND blocked = 'true'\n";
+            }
         }
         if (req.queryParams("before") != null) {
             query += "AND production_date < ? \n";
@@ -367,6 +370,7 @@ class Database {
                 ps.setString(++index, param);
             }
             var rs = ps.executeQuery();
+            
             var result = JSONizer.toJSON(rs, "recipes");
             res.status(200);
             res.body(result);
@@ -380,7 +384,7 @@ class Database {
 
     String blockPallets(Request req, Response res, String cookie, String from, String to) {
         res.type("application/json");
-        var statement = "UPDATE pallets \n" + "SET blocked = true\n"
+        var statement = "UPDATE pallets \n" + "SET blocked = 'true'\n"
                 + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?;";
         try (var ps = conn.prepareStatement(statement)) {
             ps.setString(1, cookie);
@@ -397,7 +401,7 @@ class Database {
 
     String unblockPallets(Request req, Response res, String cookie, String from, String to) {
         res.type("application/json");
-        var statement = "UPDATE pallets \n" + "SET blocked = false\n"
+        var statement = "UPDATE pallets \n" + "SET blocked = 'false'\n"
                 + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?;";
         try (var ps = conn.prepareStatement(statement)) {
             ps.setString(1, cookie);
