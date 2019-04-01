@@ -32,8 +32,10 @@ public class App {
         get("/recipes", (req, res) -> db.getRecipes(req, res));
         post("/pallets", (req, res) -> db.postPallet(req, res));
         get("/pallets", (req, res) -> db.getPallets(req, res));
-        post("/block/:cookie/:from/:to", (req, res) -> db.blockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
-        post("/unblock/:cookie/:from/:to", (req, res) -> db.unblockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
+        post("/block/:cookie/:from/:to",
+                (req, res) -> db.blockPallets(req, res, req.params(":cookie"), req.params(":from"), req.params(":to")));
+        post("/unblock/:cookie/:from/:to", (req, res) -> db.unblockPallets(req, res, req.params(":cookie"),
+                req.params(":from"), req.params(":to")));
     }
 }
 
@@ -115,49 +117,39 @@ class Database {
                 "INSERT INTO cookies (cookie_name)" + "VALUES('Almond delight')",
                 "INSERT INTO cookies (cookie_name)" + "VALUES('Berliner')",
 
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Flour', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Butter', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Icing sugar', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Flour', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Butter', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Icing sugar', 100000, 'g')",
                 "INSERT INTO materials (material_name, material_amount, unit)"
                         + "VALUES('Roasted, chopped nuts', 100000, 'g')",
                 "INSERT INTO materials (material_name, material_amount, unit)"
                         + "VALUES('Fine-ground nuts', 100000, 'g')",
                 "INSERT INTO materials (material_name, material_amount, unit)"
                         + "VALUES('Ground, roasted nuts', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Bread crumbs', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Sugar', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Egg whites', 100000, 'ml')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Chocolate', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Marzipan', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Eggs', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Potato starch', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Wheat flour', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Bread crumbs', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Sugar', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Egg whites', 100000, 'ml')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Chocolate', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Marzipan', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Eggs', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Potato starch', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Wheat flour', 100000, 'g')",
                 "INSERT INTO materials (material_name, material_amount, unit)"
                         + "VALUES('Sodium bicarbonate', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Vanilla', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Vanilla', 100000, 'g')",
                 "INSERT INTO materials (material_name, material_amount, unit)"
                         + "VALUES('Chopped almonds', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Cinnamon', 100000, 'g')",
-                "INSERT INTO materials (material_name, material_amount, unit)"
-                        + "VALUES('Vanilla sugar', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Cinnamon', 100000, 'g')",
+                "INSERT INTO materials (material_name, material_amount, unit)" + "VALUES('Vanilla sugar', 100000, 'g')",
 
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Nut ring', 'Flour', 450)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Nut ring', 'Butter', 450)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Nut ring', 'Icing sugar', 190)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Nut ring', 'Roasted, chopped nuts', 225)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Nut ring', 'Flour', 450)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Nut ring', 'Butter', 450)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Nut ring', 'Icing sugar', 190)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Nut ring', 'Roasted, chopped nuts', 225)",
                 "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
                         + "VALUES ('Nut cookie', 'Fine-ground nuts', 750)",
                 "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
@@ -170,16 +162,26 @@ class Database {
                         + "VALUES ('Nut cookie', 'Egg whites', 350)",
                 "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
                         + "VALUES ('Nut cookie', 'Chocolate', 50)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Amneris', 'Marzipan', 750)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Amneris', 'Butter', 250)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Amneris', 'Eggs', 250)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Amneris', 'Potato starch', 25)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Amneris', 'Wheat flour', 25)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Tango', 'Butter', 200)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Tango', 'Sugar', 250)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Tango', 'Flour', 300)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Tango', 'Sodium bicarbonate', 4)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Tango', 'Vanilla', 2)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Amneris', 'Marzipan', 750)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Amneris', 'Butter', 250)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Amneris', 'Eggs', 250)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Amneris', 'Potato starch', 25)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Amneris', 'Wheat flour', 25)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Tango', 'Butter', 200)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Tango', 'Sugar', 250)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Tango', 'Flour', 300)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Tango', 'Sodium bicarbonate', 4)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Tango', 'Vanilla', 2)",
                 "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
                         + "VALUES ('Almond delight', 'Butter', 400)",
                 "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
@@ -190,12 +192,18 @@ class Database {
                         + "VALUES ('Almond delight', 'Flour', 400)",
                 "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
                         + "VALUES ('Almond delight', 'Cinnamon', 10)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Berliner', 'Flour', 350)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Berliner', 'Butter', 250)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Berliner', 'Icing sugar', 100)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Berliner', 'Eggs', 50)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Berliner', 'Vanilla sugar', 5)",
-                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)" + "VALUES ('Berliner', 'Chocolate', 50)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Berliner', 'Flour', 350)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Berliner', 'Butter', 250)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Berliner', 'Icing sugar', 100)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Berliner', 'Eggs', 50)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Berliner', 'Vanilla sugar', 5)",
+                "INSERT INTO ingredients (cookie_name, material_name, ingredient_amount)"
+                        + "VALUES ('Berliner', 'Chocolate', 50)",
                 "PRAGMA foreign_keys = ON;" };
 
         try (var ps = conn.createStatement()) {
@@ -348,12 +356,9 @@ class Database {
             query += "AND cookie = ? \n";
             params.add(req.queryParams("cookie"));
         }
-        if(req.queryParams("blocked") != null){
-            if (req.queryParams("blocked").equals("0")){
-                query += "AND blocked = 'false'\n";
-            } else {
-                query += "AND blocked = 'true'\n";
-            }
+        if (req.queryParams("blocked") != null) {
+            query += "AND blocked = ?";
+            params.add(req.queryParams("blocked"));
         }
         if (req.queryParams("before") != null) {
             query += "AND production_date < ? \n";
@@ -369,7 +374,7 @@ class Database {
                 ps.setString(++index, param);
             }
             var rs = ps.executeQuery();
-            
+
             var result = JSONizer.toJSON(rs, "pallets");
             res.status(200);
             res.body(result);
@@ -383,13 +388,13 @@ class Database {
 
     String blockPallets(Request req, Response res, String cookie, String from, String to) {
         res.type("application/json");
-        var statement = "UPDATE pallets \n" + "SET blocked = 'true'\n"
+        var statement = "UPDATE pallets \n" + "SET blocked = true\n"
                 + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?;";
         try (var ps = conn.prepareStatement(statement)) {
             ps.setString(1, cookie);
             ps.setString(2, from);
             ps.setString(3, to);
-            ps.executeUpdate();
+            ps.execute();
         } catch (SQLException e) {
             res.status(400);
         }
@@ -401,13 +406,13 @@ class Database {
 
     String unblockPallets(Request req, Response res, String cookie, String from, String to) {
         res.type("application/json");
-        var statement = "UPDATE pallets \n" + "SET blocked = 'false'\n"
+        var statement = "UPDATE pallets \n" + "SET blocked = false\n"
                 + "WHERE cookie_name = ? AND production_date BETWEEN ? AND ?;";
         try (var ps = conn.prepareStatement(statement)) {
             ps.setString(1, cookie);
             ps.setString(2, from);
             ps.setString(3, to);
-            ps.executeUpdate();
+            ps.execute();
         } catch (SQLException e) {
             res.status(400);
         }

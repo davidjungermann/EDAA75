@@ -23,7 +23,7 @@ production_date DATE,
 location TEXT,
 delivery_time TIME, 
 delivery_date DATE, 
-blocked TEXT DEFAULT 'false',
+blocked INT DEFAULT 0,
 PRIMARY KEY (pallet_id),
 FOREIGN KEY (order_nbr) REFERENCES orders(order_nbr),
 FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name) 
