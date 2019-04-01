@@ -370,7 +370,7 @@ class Database {
             }
             var rs = ps.executeQuery();
             
-            var result = JSONizer.toJSON(rs, "recipes");
+            var result = JSONizer.toJSON(rs, "pallets");
             res.status(200);
             res.body(result);
             return result;
@@ -389,9 +389,11 @@ class Database {
             ps.setString(1, cookie);
             ps.setString(2, from);
             ps.setString(3, to);
+            ps.executeUpdate();
         } catch (SQLException e) {
             res.status(400);
         }
+        res.status(200);
         JsonObject item = new JsonObject();
         item.addProperty("status", "ok");
         return item.toString();
@@ -405,9 +407,11 @@ class Database {
             ps.setString(1, cookie);
             ps.setString(2, from);
             ps.setString(3, to);
+            ps.executeUpdate();
         } catch (SQLException e) {
             res.status(400);
         }
+        res.status(200);
         JsonObject item = new JsonObject();
         item.addProperty("status", "ok");
         return item.toString();
