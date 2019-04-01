@@ -394,7 +394,7 @@ class Database {
             ps.setString(1, cookie);
             ps.setString(2, from);
             ps.setString(3, to);
-            ps.execute();
+            ps.executeUpdate();
         } catch (SQLException e) {
             res.status(400);
         }
@@ -412,7 +412,7 @@ class Database {
             ps.setString(1, cookie);
             ps.setString(2, from);
             ps.setString(3, to);
-            ps.execute();
+            ps.executeUpdate();
         } catch (SQLException e) {
             res.status(400);
         }
