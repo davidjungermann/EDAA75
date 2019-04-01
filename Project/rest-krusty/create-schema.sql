@@ -53,22 +53,21 @@ PRIMARY KEY (customer_id)
 );
 
 CREATE TABLE materials(
-material_id INT,
 material_name TEXT,
 material_amount INT CHECK(material_amount >= 0), 
 unit TEXT,
 last_delivery_date DATE,
 last_delivery_amount INT,
-PRIMARY KEY (material_id)
+PRIMARY KEY (material_name)
 );
 
 CREATE TABLE ingredients(
 cookie_name TEXT,
-material_id INT,
+material_name TEXT,
 ingredient_amount INT,
 FOREIGN KEY (cookie_name) REFERENCES cookies(cookie_name),
-FOREIGN KEY (material_id) REFERENCES materials(material_id),
-PRIMARY KEY(material_id, cookie_name)
+FOREIGN KEY (material_name) REFERENCES materials(material_name),
+PRIMARY KEY(material_name, cookie_name)
 );
 
 
